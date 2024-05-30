@@ -81,6 +81,14 @@ func getStructTags(ctx context.Context, typ reflect.Type, path path.Path) (map[s
 		fieldIndexSequence := []int{i}
 		tag, tagExists := field.Tag.Lookup(`tfsdk`)
 
+		if !tagExists {
+			// see if a json tag exists and use that as a fallback
+			if jsonTag, jsonTagExists := field.Tag.Lookup(`json`); jsonTagExists {
+				tag, _, _ = strings.Cut(jsonTag, ",")
+				tagExists = true
+			}
+		}
+
 		// "tfsdk" tags with "-" are being explicitly excluded
 		if tag == "-" {
 			continue
