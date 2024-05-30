@@ -60,6 +60,9 @@ func getStructTags(_ context.Context, in reflect.Value, path path.Path) (map[str
 			continue
 		}
 		tag := field.Tag.Get(`tfsdk`)
+		if tag == "" {
+			tag, _, _ = strings.Cut(field.Tag.Get(`json`), ",")
+		}
 		if tag == "-" {
 			// skip explicitly excluded fields
 			continue
